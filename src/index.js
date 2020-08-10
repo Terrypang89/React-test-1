@@ -109,7 +109,7 @@ ReactDOM.render(
 */
 
 //State and LifeStyles +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
+/*
 function tick() {
   const element = (
     <div>
@@ -318,4 +318,57 @@ ReactDOM.render(
   <App5 />,
   document.getElementById('root')
 );
+*/
+//Handling Events+++++++++++++++++++++++++++++++++++++++++++
+
+class Toggle extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {isToggleOn: true};
+    //bind the function handleClick to class Toggle
+    this.handleClick = this.handleClick.bind(this);
+    //in js, class method not bounds by default
+    //this will be undefined when function is called
+  }
+
+  
+  handleClick(e) {
+    this.setState(prevState => ({
+      isToggleOn: !prevState.isToggleOn
+    }));
+    //cannot return false to prevent default behavior in React
+    // must use preventDefault()
+    e.preventDefault();
+    alert('The link was clicked.');
+  }
+// to replace the bind function to class
+//  handleClick = () => {
+//    console.log("this is", this);
+//  }
+
+  render() {
+    return (
+      //in js OnClick="handleClick()"
+      <button onClick={this.handleClick}>
+        {this.state.isToggleOn ? 'On' : 'OFF'}
+      </button>
+      // to replace the bind function to class
+      //<button onClick={() => this.handleClick()}>
+      //  Click me
+      //</button>
+      //
+
+      // to passing arguments to event handlers
+      //<button onClick={(e) => this.deleteRow(id, e)}>Delete Row</button>
+      //<button onClick={this.deleteRow.bind(this, id)}>Delete Row</button>
+      //
+    );
+  }
+}
+
+ReactDOM.render (
+  <Toggle />,
+  document.getElementById('root')
+);
+
 serviceWorker.register();
