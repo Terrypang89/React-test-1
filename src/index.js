@@ -320,7 +320,7 @@ ReactDOM.render(
 );
 */
 //Handling Events+++++++++++++++++++++++++++++++++++++++++++
-
+/*
 class Toggle extends React.Component {
   constructor(props) {
     super(props);
@@ -368,6 +368,196 @@ class Toggle extends React.Component {
 
 ReactDOM.render (
   <Toggle />,
+  document.getElementById('root')
+);
+*/
+
+// Conditional Greeting++++++++++++++++++++++++++++++++++++++++
+/*
+function UserGreeting(props) {
+  return <h1>Welcome back!</h1>;
+}
+
+function GuestGreeting(props){
+  return <h1>Please SIgn Up</h1>
+}
+
+function Greeting(props){
+  const isLoggedIn = props.isLoggedIn;
+  if(isLoggedIn) {
+    return <UserGreeting />;
+  } 
+  return <GuestGreeting />;
+}
+
+ReactDOM.render(
+  // based on isLoggedIn condition true or false
+  <Greeting isLoggedIn={true} />,
+  document.getElementById('root')
+)
+*/
+//Element Variable+++++++++++++++++++++++++++++++
+
+/*
+//create stateful components
+class LoginControl extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleLoginClick = this.handleLoginClick.bind(this);
+    this.handleLogoutClick = this.handleLogoutClick.bind(this);
+    this.state = {isLoggedIn: false};
+  }
+
+  handleLoginClick() {
+    this.setState({isLoggedIn: true});
+    //set the state to true and bring to LoginButton
+  }
+
+  handleLogoutClick() {
+    this.setState({isLoggedIn: false});
+    //set the state to false and bring to LogoutButton
+  }
+
+  render() {
+    const isLoggedIn = this.state.isLoggedIn;
+    let button;
+    //// use variable to store elements 
+    //sp conditionally render a part of components while 
+    //the rest of output doesnt change
+    //either render Loutout or login
+    if (isLoggedIn) {
+      // to LogoutButton function with parameter this.handleLogoutClick
+      button = <LogoutButton onClick={this.handleLogoutClick} />;
+    } else {
+      button = <LoginButton onClick={this.handleLoginClick} />;
+    }
+
+    return (
+      // bring the isLoggedIn value to Greeting function
+      <div>
+        <Greeting isLoggedIn={isLoggedIn} />
+        {button}
+      </div>
+      // rendering button with button value display
+    );
+  }
+}
+
+function UserGreeting(props) {
+  return <h1>Welcome back!</h1>;
+}
+
+function GuestGreeting(props) {
+  return <h1>Please sign up.</h1>;
+}
+
+function Greeting(props) {
+  const isLoggedIn = props.isLoggedIn;
+  if (isLoggedIn) {
+    return <UserGreeting />;
+  }
+  return <GuestGreeting />;
+}
+
+function LoginButton(props) {
+  return (
+    // state Login Button is clicked
+    <button onClick={props.onClick}>
+      Login
+    </button>
+  );
+}
+
+function LogoutButton(props) {
+  return (
+    //state logout button is clicked
+    <button onClick={props.onClick}>
+      Logout
+    </button>
+  );
+}
+
+ReactDOM.render(
+  <LoginControl />,
+  document.getElementById('root')
+);
+*/
+
+//Inline If with Logical && Operator++++++++++++++++++++++++++++++++
+
+/*
+//wrapping emded expression in curly braces
+// include && operator and handy for conditionally include elements
+function Mailbox(props){
+  const unreadMessages = props.unreadMessages;
+  return (
+    <div>
+      <h1>Hello!</h1>
+      {unreadMessages.length > 0 && 
+        <h2>
+          You have 
+          {unreadMessages.length} unread messages.
+        </h2>
+      }
+    </div>
+  );
+}
+
+//add 3 messages in array
+const messages = ['React', 'Re:React', 'Re:Re: React'];
+ReactDOM.render(
+  <Mailbox unreadMessages={messages} />,
+  document.getElementById('root')
+)
+*/
+
+//Inline If-Else with Conditional Operator++++++++++++++++++++++++++++++++
+//Preventing Component from Rendering+++++++++++++++++++++++++++++++++
+//using another conditional rendering inline
+//JavaScript conditional operator condition ? true : false.
+function WarningBanner(props) {
+  // if props is false will return nullm so wont rendering
+  if (!props.warn) {
+    return null;
+  }
+
+  //if true then rendering
+  return (
+    <div className="warning">
+      Warning!
+    </div>
+  );
+}
+
+class Page extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {showWarning: true}
+    this.handleToggleClick = this.handleToggleClick.bind(this);
+  }
+
+  handleToggleClick() {
+    // set if true become false, false become true
+    this.setState(prevState => ({
+      showWarning: !prevState.showWarning
+    }));
+  }
+
+  render() {
+    return (
+      //using js conditional 
+      <div>
+        <WarningBanner warn={this.state.showWarning} />
+        <button onClick={this.handleToggleClick}>
+          {this.state.showWarning ? 'Hide' : 'Show'}
+        </button>
+      </div>
+    );
+  }
+}
+
+ReactDOM.render(
+  <Page />,
   document.getElementById('root')
 );
 
