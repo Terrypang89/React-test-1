@@ -515,6 +515,7 @@ ReactDOM.render(
 //Preventing Component from Rendering+++++++++++++++++++++++++++++++++
 //using another conditional rendering inline
 //JavaScript conditional operator condition ? true : false.
+/*
 function WarningBanner(props) {
   // if props is false will return nullm so wont rendering
   if (!props.warn) {
@@ -560,5 +561,132 @@ ReactDOM.render(
   <Page />,
   document.getElementById('root')
 );
+*/
+
+//Lists and Keys +++++++++++++++++++++++++++++++++++++++++++++++
+// keys only use for array
+/*
+function NumberList(props) {
+  const numbers = props.numbers;
+  // transform array to list of elements 
+  const listItems = numbers.map((number)=> 
+    <li key={number.toString()}>{number}</li>
+    // if without adding key warning pop out
+    // Keys to identify which itmes has changed or added/removed
+    // keys should be given to elements inside the array to give 
+    //    elements a stable identity
+    // pick a key can be a string that uniquely identify a 
+    //    list item amoing its siblings, or use ID from your data as keys
+  );  
+  // rendering multiple components
+  return (
+  <ul>{listItems}</ul>
+  );
+}
+
+const numbers = [1,2,3,4,5];
+ReactDOM.render(
+  <NumberList numbers={numbers} />,
+  document.getElementById('root')
+);
+*/
+
+// Extracting Components with Keys+++++++++++++++++++++++++++++++++++++
+/*
+function ListItem(props){
+  // no nned specify keys here 
+  return <li>{props.value}</li>
+}
+
+function NumberList(props){
+  const numbers = props.numbers;
+  // need to specify keys here inside the array
+  const listItems = numbers.map((number) =>
+    <ListItem key={number.toString()} value={number} />
+  );
+
+  return (
+    <ul>{listItems}</ul>
+  );
+}
+
+const numbers = [1,2,3,4,5,7,8,9,10];
+ReactDOM.render(
+  <NumberList numbers={numbers} />,
+  document.getElementById('root')
+);
+*/
+
+//Keys Must Only Be Unique Among Siblings+++++++++++++++++++++++++++
+
+/*
+function Blog(props){
+  const sidebar = (
+    <ul>{props.posts.map((post)=>
+        <li key={post.id}>
+          {post.title} + {post.content}
+        </li>
+        )}
+    </ul>
+  );
+  //key used within array should be unique among their siblings
+  //they dont need to be globally unique
+  //can use the same keys when produce two different arrays
+  const content = props.posts.map((post) => 
+      <div key={post.id}>
+        <h3>{post.title}</h3>
+        <p>{post.content}</p>
+      </div>
+  );
+
+  return (
+    <div>
+      {sidebar}
+      <hr />
+      {content}
+    </div>
+  );
+}
+
+const posts = [
+  {id:1, title: 'Hello world', content: 'Welcome to learning react'},
+  {id:2, title: 'Installation', content: 'You can install React from npm.'}
+];
+
+ReactDOM.render(
+  <Blog posts={posts}/>,
+  document.getElementById('root')
+)
+*/
+
+// Embedding map() in JSX+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// declare a separate listItems variable and included it in JSX
+/*
+function ListItem(props){
+  return <li>{props.value}</li>
+}
+
+function NumberList(props){
+  const Numbers=props.numbers;
+  // JSX alllow embedding any expression in curly braces
+  // so can inline the map() result
+  return (
+    <ul>
+      {numbers.map((number)=>
+        <ListItem key={number.toString()} value={number} />
+      )}
+    </ul>
+  );
+}
+
+const numbers = [1,2,3,4,5,7,8,9,10];
+ReactDOM.render(
+  <NumberList numbers={numbers} />,
+  document.getElementById('root')
+);
+*/
+
+//Forms: Controlled Components+++++++++++++++++++++++++++++++++++++
+
 
 serviceWorker.register();
