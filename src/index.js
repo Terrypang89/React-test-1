@@ -661,6 +661,7 @@ ReactDOM.render(
 
 // Embedding map() in JSX+++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // declare a separate listItems variable and included it in JSX
+
 /*
 function ListItem(props){
   return <li>{props.value}</li>
@@ -685,8 +686,202 @@ ReactDOM.render(
   document.getElementById('root')
 );
 */
+// Forms +++++++++++++++++++++++++++++++++++++++++++++++
+// Conctrolled Components ===============================
+/*
+class NameForm extends React.Component
+{
+  constructor(props) {
+    super(props);
+    this.state = {value: ''};
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
 
-//Forms: Controlled Components+++++++++++++++++++++++++++++++++++++
+  //handlechnage runs on every keystroke to update 
+  // react state, the displayed value will update as user types
+  handleChange(event) {
+    this.setState({value: event.target.value});
+  }
 
+  handleSubmit(event){
+    alert('A name was submitted:' + this.state.value);
+    event.preventDefault();
+    //if without prevent Default the value will be cleared at form
+  }
+
+  // React component that renders a form also control 
+  // what in the form on subsequenc user input
+  // input form element whose value is controlled by react 
+  // is called "controlled component"
+  render() {
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <label>
+          Name: <input type="text" value={this.state.value} onChange={this.handleChange} />
+        </label>
+        <input type="submit" value="submit" />
+      </form>
+    );
+  }
+  // value attribute is set on form element, 
+  // displayed value will be this.state.value 
+}
+
+ReactDOM.render(
+  <NameForm />,
+  document.getElementById('root')
+);
+*/
+
+// Textarea tag ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/*
+class EssayForm extends React.Component{
+  constructor(props){
+    super(props);
+    //initially set the value
+    this.state = {
+      value: "please write an essay about your favourite DOM element"
+    };
+
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  };
+  handleChange(event) {
+    this.setState({value: event.target.value});
+  }
+
+  handleSubmit(event) {
+    alert("An essay was submitted: " + this.state.value);
+    event.preventDefault();
+  }
+
+  render() {
+    // textarea use value attribute instead
+    // so a form use textarea cna be written very similar to a form that use a single line input
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <label>
+          Essay:
+          <textarea value={this.state.value} onChange={this.handleChange} />
+        </label>
+        <input type="submit" value="Submit" />
+      </form>
+    );
+  }
+}
+
+ReactDOM.render(
+  <EssayForm />,
+  document.getElementById('root')
+);
+
+*/
+
+// the select tag ++++++++++++++++++++++++++++++++++++++++++++
+/*
+class FlavorForm extends React.Component {
+  constructor(props) {
+    super(props);
+    // initially set as coconut due to selected attribute
+    this.state = {value: 'coconut'};
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleChange(event) {
+    this.setState({value: event.target.value});
+  }
+
+  handleSubmit(event) {
+    alert('Your favorite flavor is: ' + this.state.value);
+    event.preventDefault();
+  }
+
+  render() {
+    // freact use value attribute on root select tag for controlled component
+    return (
+      // select tag to create drop down list
+      <form onSubmit={this.handleSubmit}>
+        <label>
+          Pick your favorite flavor:
+          <select value={this.state.value} onChange={this.handleChange}>
+            <option value="grapefruit">Grapefruit</option>
+            <option value="lime">Lime</option>
+            <option value="coconut">Coconut</option>
+            <option value="mango">Mango</option>
+          </select>
+        </label>
+        <input type="submit" value="Submit" />
+      </form>
+    );
+  }
+}
+
+ReactDOM.render(
+  <FlavorForm />,
+  document.getElementById('root')
+);
+*/
+
+// Handling Multiple input ++++++++++++++++++++++++++++++++++++++++++
+
+//When you need to handle multiple controlled input elements, 
+//you can add a name attribute to each element and 
+//let the handler function choose what to do based on the 
+//value of event.target.name.
+class Reservation extends React.Component {
+  constructor(props) {
+    super(props);
+    //initially set input value
+    this.state = {
+      isGoing: true,
+      numberOfGuests: 2
+    };
+
+    this.handleInputChange = this.handleInputChange.bind(this);
+  }
+
+  handleInputChange(event) {
+    const target = event.target;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
+    const name = target.name;
+    this.setState({
+      [name]: value
+    });
+    if(target.checked)
+      alert(name + ":" + value + " from checkbox"); 
+  }
+
+  render() {
+    // add is going check box and input tag
+    return (
+      <form>
+        <label>
+          Is going:
+          <input
+            name="isGoing"
+            type="checkbox"
+            checked={this.state.isGoing}
+            onChange={this.handleInputChange} />
+        </label>
+        <br />
+        <label>
+          Number of guests:
+          <input
+            name="numberOfGuests"
+            type="number"
+            value={this.state.numberOfGuests}
+            onChange={this.handleInputChange} />
+        </label>
+      </form>
+    );
+  }
+}
+
+ReactDOM.render(
+  <Reservation />,
+  document.getElementById('root')
+);
 
 serviceWorker.register();
