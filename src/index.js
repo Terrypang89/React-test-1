@@ -830,6 +830,7 @@ ReactDOM.render(
 //you can add a name attribute to each element and 
 //let the handler function choose what to do based on the 
 //value of event.target.name.
+/*
 class Reservation extends React.Component {
   constructor(props) {
     super(props);
@@ -881,6 +882,218 @@ class Reservation extends React.Component {
 
 ReactDOM.render(
   <Reservation />,
+  document.getElementById('root')
+);
+*/
+
+// Lifting state up +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+/*
+function BoilingVerdict(props) {
+  if (props.celsius >= 100) {
+    return <p>The water would boil.</p>;
+  }
+  return <p>The water would not boil.</p>;
+}
+
+class Calculator extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleChange = this.handleChange.bind(this);
+    this.state = {temperature: ''};
+  }
+
+  handleChange(e) {
+    this.setState({temperature: e.target.value});
+  }
+
+  render() {
+    const temperature = this.state.temperature;
+    return (
+      <fieldset>
+        <legend>Enter temperature in Celsius:</legend>
+        <input
+          value={temperature}
+          onChange={this.handleChange} />
+        <BoilingVerdict
+          celsius={parseFloat(temperature)} />
+      </fieldset>
+    );
+  }
+}
+
+ReactDOM.render(
+  <Calculator />,
+  document.getElementById('root')
+);
+*/
+
+//Adding second input ++++++++++++++++++++++++++++++++++++++++++++++
+/*
+const scaleNames = {
+  c: 'Celsius',
+  f: 'Fahrenheit'
+};
+
+class TemperatureInput extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleChange = this.handleChange.bind(this);
+    this.state = {temperature: ''};
+  }
+
+  handleChange(e) {
+    this.setState({temperature: e.target.value});
+  }
+
+  render() {
+    //render <input> that let us enter temperature and 
+    // keep value in this.state.temperature
+    const temperature = this.state.temperature;
+    const scale = this.props.scale;
+    return (
+      <fieldset>
+        <legend>Enter temperature in {scaleNames[scale]}:</legend>
+        <input value={temperature} onChange={this.handleChange} />
+      </fieldset>
+    );
+  }
+}
+
+class Calculator extends React.Component {
+  render() {
+    return (
+      <div>
+        <TemperatureInput scale="c" />
+        <TemperatureInput scale="f" />
+      </div>
+    );
+  }
+}
+
+ReactDOM.render(
+  <Calculator />,
+  document.getElementById('root')
+);
+*/
+
+//Lifting state up +++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+const scaleNames = {
+  c: 'Celcius',
+  f: 'Fahrenheit'
+};
+
+function toCelcius(fahrenheit) {
+  return (fahrenheit - 32) * 5 / 9;
+}
+
+function toFehrenheit(celsius) {
+  return (celsius * 9 / 5) + 32;
+}
+
+//call from 
+function tryConvert(temperature, convert) {
+  // convert is function either toCelcius or toFehrenheit
+  // call from calculator then send to 
+  // class TemperatureInput, onTemperatureChange
+  const input = parseFloat(temperature);
+  if(Number.isNaN(input)){
+    return '';
+  }
+  const output = convert(input);
+  const rounded = Math.round(output * 1000) / 1000;
+  return rounded.toString();
+}
+
+function BoilingVerdict(props) {
+  if(props.celcius >= 100) {
+    return <p>The water would boil.</p>;
+  }
+  return <p>The water would not boil.</p>;
+}
+
+// temperatureInput components independetly keep their value in local state
+class TemperatureInput extends React.Component {
+    constructor(props) {
+      super(props);
+      this.handleChange = this.handleChange.bind(this);
+    }
+
+    // when want to update its temperature, call this.props.onTemperatureChange
+    handleChange(e) {
+      this.props.onTemperatureChange(e.target.value);
+      //no special meaning to either Temperature or onTemperatureChange props 
+      // by the parent Calculator component
+      // it will handle the change by modify its own local state
+      //then rerendering both inputs with new values
+      // so send to handleCelsiusChange or handleFehrenheitChange 
+    }
+
+    //two inputs to be in sync with each other,
+    //sharing state is accomplished by moving it up to 
+    //closest common ancestor of components that need it
+    // so remove local state from TemperatureInput to Calculator
+    render(){
+      //replace this.state.temperature to this.props.temperature
+      //due to temperature is from parent as prop, so here no control over it
+      const temperature = this.props.temperature;
+      const scale = this.props.scale;
+      return (
+        <fieldset>
+          <legend>Enter temperature in {scaleNames[scale]}:</legend>
+          <input value={temperature} onChange={this.handleChange} />
+        </fieldset>
+      );
+    }
+}
+
+//calculator onw  shared state become "source of truth" 
+//for current temprature  in both inputs
+// so can instruct them both to have values that are consistent with each other
+class Calculator extends React.Component{
+  constructor(props){
+    super(props);
+    this.handleCelsiusChange = this.handleCelsiusChange.bind(this);
+    this.handleFehrenheitChange = this.handleFehrenheitChange.bind(this);
+    this.state = {temperature: '', scale: 'c'};
+  }
+//props of both TemperatureInput components are coming from same parent Calculator
+// two inputs will always be in sync
+  handleCelsiusChange(temperature){
+    this.setState({scale: 'c', temperature});
+  }
+
+  handleFehrenheitChange(temperature){
+    this.setState({scale: 'f', temperature});
+  }
+
+  render() {
+    // main control so use this.state.temperature
+    // to store current input temperature and scale in its local satte
+    const scale = this.state.scale;
+    const temperature = this.state.temperature;
+    const celsius = scale === 'f' ? tryConvert(temperature, toCelcius) : temperature;
+    const fahrenheit = scale === 'c' ? tryConvert(temperature, toFehrenheit) : temperature;
+    //if celcius is set then fahrenheit will direct be temperature
+
+  return (
+      // send value to tempeiratureInput and Boilingverdict for satte comment
+      // if enter 37 to celcius, state of calculator be 
+      //  {  temperature: '37',  scale: 'c' }
+      // if eneter 212 to fahrenheit, state of calculator be 
+      // {  temperature: '212',   scale: 'f' }
+      <div>
+        <TemperatureInput scale="c" temperature={celsius} onTemperatureChange={this.handleCelsiusChange} />
+        <TemperatureInput scale="f" temperature={fahrenheit} onTemperatureChange={this.handleFehrenheitChange} />
+        <BoilingVerdict celsius={parseFloat(celsius)} />
+      </div>
+    );
+  }
+}
+
+ReactDOM.render(
+  <Calculator />,
   document.getElementById('root')
 );
 
