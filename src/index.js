@@ -979,6 +979,7 @@ ReactDOM.render(
 
 //Lifting state up +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+/*
 const scaleNames = {
   c: 'Celcius',
   f: 'Fahrenheit'
@@ -1094,6 +1095,195 @@ class Calculator extends React.Component{
 
 ReactDOM.render(
   <Calculator />,
+  document.getElementById('root')
+);
+*/
+
+//Compoistion vs Inheritance+++++++++++++++++++++++++++++++++++++++++++++
+//Containment++++++++++++++++++++++++++++
+// some components dont know their children ahend of time 
+// especially common for components like sidebar or Dialog that represent "boxes"
+
+// so recommend components use special children prop to 
+// pass children elements directly into their output
+/*
+function FancyBorder(props) {
+  return (
+    //special children props 
+    //to pass children elements direct to their output
+  <div className={'FancyBorder FnacyBorder-' + props.color}>
+    {props.children}
+    </div>
+  );
+}
+
+
+function WelcomeDialog() {
+  return (
+    //anything inside <FancyBorder> tag get passed to 
+    //FancyBorder components as children prop
+    // so FancyBorder renders {props.children} inside <div>
+    //the passed lement appear to final output
+    <FancyBorder color="blue">
+      <hi className="Dialog-title">
+        Welcome
+      </hi>
+      <p className="Dialog-message">
+        Thank you for visiting our spacecraft!
+      </p>
+    </FancyBorder>
+  );
+}
+ReactDOM.render(
+  <WelcomeDialog />,
+  document.getElementById('root')
+);
+*/
+
+//another containment example+++++++++++++++++++++++++++++++++++
+/*
+function Contacts() {
+  return <div className="Contacts" />;
+}
+
+function Chat() {
+  return <div className="Chat" />;
+}
+
+function SplitPane(props) {
+  return (
+    // props.left = <div className="Contacts" /> from Contatcs()
+    // props.right = <div className="Chat" /> from Chat()
+    <div className="SplitPane">
+      <div className="SplitPane-left">
+        {props.left}
+      </div>
+      <div className="SplitPane-right">
+        {props.right}
+      </div>
+    </div>
+  );
+}
+
+function App2() {
+  return (
+    <SplitPane
+      left={ <Contacts /> }
+      right={ <Chat /> } 
+    />
+  );
+}
+
+ReactDOM.render(
+  <App2 />,
+  document.getElementById('root')
+);
+*/
+
+//Specialization +++++++++++++++++++++++++++++++++++++++++++
+//Sometimes we think about components as 
+//being “special cases” of other components. 
+
+//In React, this is also achieved by composition, 
+//where a more “specific” component renders a more “generic” 
+//one and configures it with props:
+/*
+function FancyBorder(props) {
+  return (
+    //props children refers to whole FancyBorder tag
+    <div className={'FancyBorder FancyBorder-' + props.color}>
+      {props.children}
+    </div>
+  );
+}
+
+function Dialog(props) {
+  return (
+    //props.title refers to Welcome &&
+    //props.message refers to message
+    <FancyBorder color="blue">
+      <h1 className="Dialog-title">
+        {props.title}
+      </h1>
+      <p className="Dialog-message">
+        {props.message}
+      </p>
+    </FancyBorder>
+  );
+}
+
+function WelcomeDialog() {
+  return (
+    <Dialog
+      title="Welcome"
+      message="Thank you for visiting our spacecraft!" />
+  );
+}
+
+ReactDOM.render(
+  <WelcomeDialog />,
+  document.getElementById('root')
+);
+*/
+
+//composition +++++++++++++++++++++++++++++++++
+//Composition works equally well 
+//for components defined as classes:
+
+function FancyBorder(props) {
+  return (
+    <div className={'FancyBorder FancyBorder-' + props.color}>
+      {props.children}
+    </div>
+  );
+}
+
+function Dialog(props) {
+  return (
+    <FancyBorder color="blue">
+      <h1 className="Dialog-title">
+        {props.title}
+      </h1>
+      <p className="Dialog-message">
+        {props.message}
+      </p>
+      {props.children}
+    </FancyBorder>
+  );
+}
+
+class SignUpDialog extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSignUp = this.handleSignUp.bind(this);
+    this.state = {login: ''};
+  }
+
+  render() {
+    return (
+      <Dialog title="Mars Exploration Program"
+              message="How should we refer to you?">
+        <input value={this.state.login}
+               onChange={this.handleChange} />
+        <button onClick={this.handleSignUp}>
+          Sign Me Up!
+        </button>
+      </Dialog>
+    );
+  }
+
+  handleChange(e) {
+    this.setState({login: e.target.value});
+  }
+
+  handleSignUp() {
+    alert(`Welcome aboard, ${this.state.login}!`);
+  }
+}
+
+ReactDOM.render(
+  <SignUpDialog />,
   document.getElementById('root')
 );
 
